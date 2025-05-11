@@ -1,5 +1,25 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const scriptURL = "https://script.google.com/macros/s/AKfycbwGB4sQ5GLPrZZJYyzOGpXUaqNrHKQYioaFG6adEy8V2vl7oMBrKypq0RBU6UQ-8WQ/exec";
+  // Update timestamp with date and time
+  function updateTimestamp() {
+    const now = new Date();
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    };
+    const formattedDate = now.toLocaleDateString("en-US", options);
+    document.getElementById("timestamp").textContent = formattedDate;
+  }
+
+  // Initialize and update timestamp every second
+  updateTimestamp();
+  setInterval(updateTimestamp, 1000);
+
+  const scriptURL = "https://script.google.com/macros/s/AKfycbz0XWmcJ06XsZf0dpuCNoSUocUd46zRfTMAHbxsbgtRbc-vTJVF8UwrRZgFUSluK44/exec";
 
   const sections = document.querySelectorAll("section");
   const navLinks = document.querySelectorAll("nav ul li a");
@@ -61,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   initContactForm();
 
-  initBackToTopButton();
+  //initBackToTopButton();
 
   initTypeWriter();
 
@@ -70,108 +90,76 @@ document.addEventListener("DOMContentLoaded", function () {
   initCounterAnimation();
 });
 
-// Form submission handling function - moved outside DOMContentLoaded
-function initContactForm(contactForm, scriptURL) {
-  const submitBtn = contactForm.querySelector('button[type="submit"]');
-  const formStatus = document.getElementById("formStatus") || createFormStatusElement();
+// Form validation function
+function validateForm(formData) {
+  let errors = [];
 
-  // Tambahkan loading spinner jika belum ada
-  if (!contactForm.querySelector(".loading-spinner")) {
-    const spinner = document.createElement("span");
-    spinner.className = "loading-spinner";
-    spinner.style.display = "none";
-    spinner.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    submitBtn.appendChild(spinner);
+  // Validate name (minimal 2 karakter)
+  const name = formData.get("name");
+  if (!name || name.trim().length < 2) {
+    errors.push("Nama harus diisi minimal 2 karakter");
   }
 
-  contactForm.addEventListener("submit", function (e) {
+  // Validate email
+  const email = formData.get("email");
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRegex.test(email)) {
+    errors.push("Email tidak valid");
+  }
+
+  // Validate message (minimal 10 karakter)
+  const message = formData.get("message");
+  if (!message || message.trim().length < 10) {
+    errors.push("Pesan harus diisi minimal 10 karakter");
+  }
+
+  return errors;
+}
+
+// Form submission handling function
+function initContactForm(contactForm, scriptURL) {
+  const form = document.getElementById("contactForm");
+  if (!form) return;
+
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
+    const submitBtn = document.getElementById("submitBtn");
+    const loadingSpinner = submitBtn.querySelector(".loading-spinner");
+    const formStatus = document.getElementById("formStatus");
+    const contactScriptURL = "https://script.google.com/macros/s/AKfycbz0XWmcJ06XsZf0dpuCNoSUocUd46zRfTMAHbxsbgtRbc-vTJVF8UwrRZgFUSluK44/exec";
 
-    // Dapatkan elemen input
-    const nameInput = contactForm.querySelector('input[name="name"]') || contactForm.querySelector('input[type="text"]');
-    const emailInput = contactForm.querySelector('input[name="email"]') || contactForm.querySelector('input[type="email"]');
-    const messageInput = contactForm.querySelector('textarea[name="message"]') || contactForm.querySelector("textarea");
+    // Create FormData object
+    const formData = new FormData(form);
 
-    // Pastikan elemen memiliki atribut name (penting untuk FormData)
-    if (nameInput && !nameInput.hasAttribute("name")) nameInput.setAttribute("name", "name");
-    if (emailInput && !emailInput.hasAttribute("name")) emailInput.setAttribute("name", "email");
-    if (messageInput && !messageInput.hasAttribute("name")) messageInput.setAttribute("name", "message");
+    // Add timestamp
+    formData.append("timestamp", new Date().toISOString());
 
-    // Debug info
-    console.log("Form elements:", {
-      nameInput: nameInput ? nameInput.value : "not found",
-      emailInput: emailInput ? emailInput.value : "not found",
-      messageInput: messageInput ? messageInput.value : "not found",
-    });
+    // Validate form
+    const validationErrors = validateForm(formData);
 
-    // Pastikan semua input ada sebelum validasi
-    if (!nameInput || !emailInput || !messageInput) {
-      showStatus("Error: Form elements not properly configured", "error");
+    if (validationErrors.length > 0) {
+      // Display validation errors
+      showStatus(validationErrors.join("<br>"), "error");
       return;
     }
 
-    // Validasi sederhana
-    if (!nameInput.value.trim()) {
-      showStatus("Nama tidak boleh kosong", "error");
-      nameInput.focus();
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(emailInput.value)) {
-      showStatus("Format email tidak valid", "error");
-      emailInput.focus();
-      return;
-    }
-
-    if (messageInput.value.trim().length < 10) {
-      showStatus("Pesan harus minimal 10 karakter", "error");
-      messageInput.focus();
-      return;
-    }
-
-    // Tampilkan spinner loading
     submitBtn.disabled = true;
-    const loadingSpinner = contactForm.querySelector(".loading-spinner");
-    if (loadingSpinner) loadingSpinner.style.display = "inline-block";
+    loadingSpinner.style.display = "inline-block";
 
-    // Debugging: Log the FormData being sent
-    console.log("Sending FormData:", Array.from(new FormData(contactForm)));
-
-    // If scriptURL is configured, send to Google Sheets
-    if (scriptURL && scriptURL !== "https://script.google.com/macros/s/AKfycbwGB4sQ5GLPrZZJYyzOGpXUaqNrHKQYioaFG6adEy8V2vl7oMBrKypq0RBU6UQ-8WQ/exec") {
-      fetch(scriptURL, {
-        method: "POST",
-        body: new FormData(contactForm),
+    fetch(contactScriptURL, { method: "POST", body: new FormData(form) })
+      .then((response) => {
+        formStatus.textContent = "Message sent successfully!";
+        formStatus.classList.add("success");
+        form.reset();
       })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json().catch(() => {
-            // Jika response bukan JSON, return success default
-            return { result: "success" };
-          });
-        })
-        .then((data) => {
-          showStatus("Pesan berhasil dikirim! Terima kasih telah menghubungi saya.", "success");
-          contactForm.reset();
-        })
-        .catch((error) => {
-          console.error("Error!", error.message);
-          showStatus("Terjadi kesalahan. Silakan coba lagi.", "error");
-        })
-        .finally(() => {
-          submitBtn.disabled = false;
-          if (loadingSpinner) loadingSpinner.style.display = "none";
-        });
-    } else {
-      console.warn("scriptURL is not properly configured."); // Debugging: Warn if scriptURL is not set
-      showStatus("Pesan berhasil dikirim! Terima kasih telah menghubungi saya.", "success");
-      contactForm.reset();
-      submitBtn.disabled = false;
-      if (loadingSpinner) loadingSpinner.style.display = "none";
-    }
+      .catch((error) => {
+        formStatus.textContent = "Error sending message. Please try again.";
+        formStatus.classList.add("error");
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        loadingSpinner.style.display = "none";
+      });
   });
 }
 
