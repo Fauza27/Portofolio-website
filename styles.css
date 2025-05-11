@@ -1186,6 +1186,34 @@ footer {
   .about-buttons {
     justify-content: center;
   }
+
+  .contact {
+    padding: 50px 15px; /* Kurangi padding untuk perangkat kecil */
+  }
+
+  .contact-content {
+    grid-template-columns: 1fr; /* Pastikan hanya satu kolom */
+    padding: 0; /* Hilangkan padding tambahan */
+  }
+
+  .contact-form {
+    margin: 0 auto; /* Pastikan form berada di tengah */
+    width: 100%; /* Sesuaikan lebar form */
+    box-sizing: border-box; /* Pastikan padding tidak melampaui lebar */
+  }
+
+  .social-connect {
+    margin-top: 30px; /* Tambahkan jarak antara form dan social connect */
+  }
+
+  .social-grid {
+    grid-template-columns: 1fr; /* Pastikan social links dalam satu kolom */
+    gap: 15px; /* Tambahkan jarak antar elemen */
+  }
+
+  .social-link {
+    padding: 10px; /* Kurangi padding untuk elemen kecil */
+  }
 }
 
 @media (max-width: 380px) {
