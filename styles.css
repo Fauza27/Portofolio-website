@@ -1216,6 +1216,63 @@ footer {
   }
 }
 
+@media (max-width: 576px) {
+  .contact {
+    padding: 30px 10px; /* Kurangi padding untuk perangkat kecil */
+  }
+
+  .contact-header h2 {
+    font-size: 24px; /* Sesuaikan ukuran font header */
+    text-align: center; /* Pusatkan teks */
+  }
+
+  .contact-header p {
+    font-size: 14px; /* Kurangi ukuran font deskripsi */
+    text-align: center; /* Pusatkan teks */
+  }
+
+  .contact-content {
+    grid-template-columns: 1fr; /* Pastikan hanya satu kolom */
+    gap: 20px; /* Tambahkan jarak antar elemen */
+  }
+
+  .contact-form {
+    margin: 0 auto; /* Pastikan form berada di tengah */
+    width: 100%; /* Sesuaikan lebar form */
+    padding: 20px; /* Tambahkan padding untuk kenyamanan */
+    box-sizing: border-box; /* Pastikan padding tidak melampaui lebar */
+    background-color: var(--bg-card); /* Tambahkan latar belakang */
+    border-radius: var(--border-radius); /* Tambahkan border radius */
+  }
+
+  .form-group {
+    margin-bottom: 15px; /* Kurangi jarak antar input */
+  }
+
+  .form-group input,
+  .form-group textarea {
+    font-size: 14px; /* Sesuaikan ukuran font input */
+  }
+
+  .social-connect {
+    margin-top: 20px; /* Tambahkan jarak antara form dan social connect */
+  }
+
+  .social-grid {
+    grid-template-columns: 1fr; /* Pastikan social links dalam satu kolom */
+    gap: 10px; /* Tambahkan jarak antar elemen */
+  }
+
+  .social-link {
+    padding: 10px; /* Kurangi padding untuk elemen kecil */
+    font-size: 14px; /* Sesuaikan ukuran font */
+  }
+
+  .social-link span {
+    font-size: 12px; /* Kurangi ukuran teks deskripsi */
+  }
+}
+
 @media (max-width: 380px) {
   .hero-content,
   .about-content {
