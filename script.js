@@ -1364,6 +1364,30 @@ function initBackToTopButton() {
 
 document.addEventListener("DOMContentLoaded", initBackToTopButton);
 
+// Fungsi untuk mengatur ulang susunan about section pada mobile
+function rearrangeAboutSection() {
+  const aboutContainer = document.querySelector(".about-content");
+  const aboutText = document.querySelector(".about-text");
+  const aboutImage = document.querySelector(".about-image");
+
+  if (window.innerWidth <= 576) {
+    // Pada tampilan mobile
+    // Memindahkan gambar sebelum teks
+    aboutContainer.insertBefore(aboutImage, aboutText);
+  } else {
+    // Pada tampilan desktop, mengembalikan ke urutan asli
+    aboutContainer.appendChild(aboutImage); // Gambar di akhir
+  }
+}
+
+// Jalankan saat halaman dimuat
+document.addEventListener("DOMContentLoaded", function () {
+  rearrangeAboutSection();
+
+  // Jalankan kembali saat ukuran layar berubah
+  window.addEventListener("resize", rearrangeAboutSection);
+});
+
 // Inisialisasi semua fungsi saat DOM sudah load
 document.addEventListener("DOMContentLoaded", function () {
   // Panggil fungsi yang sudah ada sebelumnya
