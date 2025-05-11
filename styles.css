@@ -972,25 +972,34 @@ footer {
 }
 
 /* Responsive */
+/* Responsiveness fixes */
+
+/* Responsive - Base improvements */
 @media (max-width: 1200px) {
   .container {
     padding: 0 30px;
+    width: 100%;
+    max-width: 100%;
   }
 }
 
 @media (max-width: 992px) {
   .hero h1 {
-    font-size: 54px;
+    font-size: 52px;
   }
 
   .about-content,
   .hero-content {
     flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 
   .hero-image,
   .about-image {
-    margin-top: 30px;
+    margin-top: 40px;
+    width: 100%;
+    max-width: 500px;
   }
 
   .contact-content {
@@ -1009,12 +1018,19 @@ footer {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .tech-stack-grid {
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
   }
 
-  .stat-card h4 {
-    font-size: 36px;
+  /* Tech stack improvements */
+  .tech-stack-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+
+  .project-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    justify-content: center;
   }
 }
 
@@ -1047,7 +1063,7 @@ footer {
   }
 
   .project-grid {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 
   .certificates-grid {
@@ -1056,16 +1072,18 @@ footer {
   }
 
   .tech-stack-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
   }
 
   .portfolio-tabs {
     flex-wrap: wrap;
+    justify-content: center;
+    max-width: 100%;
   }
 
   .tab-button {
     font-size: 14px;
-    padding: 8px 16px;
+    padding: 8px 14px;
   }
 
   .badge {
@@ -1075,41 +1093,74 @@ footer {
 
   .hero p {
     font-size: 16px;
+    max-width: 100%;
   }
 
   .about-text h3 {
     font-size: 30px;
   }
+
+  .social-links {
+    justify-content: center;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    padding-left: 0;
+  }
+
+  /* Fix social links scrolling */
+  .social-links a {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 @media (max-width: 576px) {
+  /* Fix mobile navigation */
   .logo a {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   nav ul {
-    gap: 10px;
+    gap: 12px;
   }
 
   nav ul li a {
     font-size: 14px;
   }
 
-  .hero h1 {
-    font-size: 32px;
+  /* Fix mobile hero section */
+  .hero {
+    padding: 110px 0 70px;
+    text-align: center;
   }
 
+  .hero h1 {
+    font-size: 32px;
+    line-height: 1.2;
+  }
+
+  .tech-stack {
+    justify-content: center;
+  }
+
+  /* Fix button stacking on mobile */
   .hero-buttons,
-  .about-buttons {
+  .about-buttons,
+  .modal-footer {
     flex-direction: column;
+    width: 100%;
+    align-items: center;
   }
 
   .hero-buttons .btn,
-  .about-buttons .btn {
+  .about-buttons .btn,
+  .modal-footer .btn {
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
+  /* Fix grid layouts */
   .social-grid {
     grid-template-columns: 1fr;
   }
@@ -1122,9 +1173,20 @@ footer {
     grid-template-columns: 1fr;
   }
 
-  .tech-stack span {
-    font-size: 12px;
-    padding: 6px 12px;
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tech-stack-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  /* Fix section headers */
+  .about-header,
+  .portfolio-header,
+  .contact-header {
+    margin-bottom: 40px;
   }
 
   .about-header h2,
@@ -1137,65 +1199,67 @@ footer {
     font-size: 14px;
   }
 
-  .about-image img {
-    width: 250px;
-    height: 250px;
+  /* Fix about section */
+  .about-content {
+    margin-bottom: 40px;
   }
 
+  .about-image {
+    order: -1;
+    margin: 0 auto 30px;
+  }
+
+  .about-image img {
+    width: 220px;
+    height: 220px;
+  }
+
+  .about-text {
+    text-align: center;
+  }
+
+  .about-buttons {
+    justify-content: center;
+  }
+
+  /* Fix modal */
   .modal-content {
     padding: 15px;
+    width: 95%;
   }
 
   .modal-header h2 {
     font-size: 22px;
   }
 
-  .modal-footer {
-    flex-wrap: wrap;
-  }
-
-  .modal-footer .btn {
-    width: 100%;
-    margin-bottom: 10px;
-  }
-
-  .about-content {
-    flex-direction: column;
-  }
-
-  .about-image {
-    margin: 0 auto 30px; /* Memberikan margin bawah ke gambar */
-    order: 1; /* Untuk memastikan urutan di flexbox jika diperlukan */
-    text-align: center;
-  }
-
-  .about-text {
-    order: 2; /* Untuk memastikan urutan di flexbox jika diperlukan */
-    text-align: center;
-  }
-
-  .about-image img {
-    width: 200px;
-    height: 200px;
-  }
-
-  .about-header {
-    margin-bottom: 30px;
-  }
-
-  .about-buttons {
-    justify-content: center;
+  /* Social links fix */
+  .social-links {
+    position: relative;
+    padding: 20px 0;
+    bottom: auto;
+    margin-top: 20px;
   }
 }
 
+/* Extra small devices */
 @media (max-width: 380px) {
-  .hero-content,
-  .about-content {
-    text-align: center;
+  /* Fix extremely small screens */
+  .container {
+    padding: 0 15px;
+  }
+
+  header .container {
+    padding: 0 10px;
   }
 
   .hero h1 {
-    font-size: 28px;
+    font-size: 26px;
+    margin-bottom: 15px;
+  }
+
+  .hero p {
+    font-size: 15px;
+    margin-bottom: 25px;
   }
 
   .about-text h3 {
@@ -1208,25 +1272,50 @@ footer {
     font-size: 24px;
   }
 
-  .tech-stack-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
+  /* Improve navigation */
   nav ul {
     gap: 8px;
   }
 
   nav ul li a {
     font-size: 12px;
+    padding: 4px;
   }
 
+  /* Fix badge and tech stack */
   .badge {
     width: 100%;
     justify-content: center;
+    margin-bottom: 15px;
   }
 
   .about-image img {
     width: 180px;
     height: 180px;
+  }
+
+  .tech-stack span {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  /* Fix form elements */
+  input,
+  textarea,
+  .btn {
+    padding: 10px 12px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  /* Fix modal content */
+  .modal-tech {
+    flex-wrap: wrap;
+  }
+
+  .modal-header h2 {
+    font-size: 20px;
   }
 }
