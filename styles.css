@@ -1139,6 +1139,34 @@ footer {
     width: 100%;
     margin-bottom: 10px;
   }
+
+  .about-content {
+    flex-direction: column;
+  }
+
+  .about-image {
+    margin: 0 auto 30px; /* Memberikan margin bawah ke gambar */
+    order: 1; /* Untuk memastikan urutan di flexbox jika diperlukan */
+    text-align: center;
+  }
+
+  .about-text {
+    order: 2; /* Untuk memastikan urutan di flexbox jika diperlukan */
+    text-align: center;
+  }
+
+  .about-image img {
+    width: 200px;
+    height: 200px;
+  }
+
+  .about-header {
+    margin-bottom: 30px;
+  }
+
+  .about-buttons {
+    justify-content: center;
+  }
 }
 
 @media (max-width: 380px) {
@@ -1176,5 +1204,10 @@ footer {
   .badge {
     width: 100%;
     justify-content: center;
+  }
+
+  .about-image img {
+    width: 180px;
+    height: 180px;
   }
 }
