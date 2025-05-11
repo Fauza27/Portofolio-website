@@ -35,152 +35,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Form submission handling
+  // Initialize form handling
   if (contactForm) {
-    const submitBtn = contactForm.querySelector('button[type="submit"]');
-    const formStatus = document.getElementById("formStatus") || createFormStatusElement();
-
-    // Tambahkan loading spinner jika belum ada
-    if (!contactForm.querySelector(".loading-spinner")) {
-      const spinner = document.createElement("span");
-      spinner.className = "loading-spinner";
-      spinner.style.display = "none";
-      spinner.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-      submitBtn.appendChild(spinner);
-    }
-
-    contactForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      // Dapatkan elemen input
-      const nameInput = contactForm.querySelector('input[name="name"]') || contactForm.querySelector('input[type="text"]');
-      const emailInput = contactForm.querySelector('input[name="email"]') || contactForm.querySelector('input[type="email"]');
-      const messageInput = contactForm.querySelector('textarea[name="message"]') || contactForm.querySelector("textarea");
-
-      // Pastikan elemen memiliki atribut name (penting untuk FormData)
-      if (nameInput && !nameInput.hasAttribute("name")) nameInput.setAttribute("name", "name");
-      if (emailInput && !emailInput.hasAttribute("name")) emailInput.setAttribute("name", "email");
-      if (messageInput && !messageInput.hasAttribute("name")) messageInput.setAttribute("name", "message");
-
-      // Debug info
-      console.log("Form elements:", {
-        nameInput: nameInput ? nameInput.value : "not found",
-        emailInput: emailInput ? emailInput.value : "not found",
-        messageInput: messageInput ? messageInput.value : "not found",
-      });
-
-      // Pastikan semua input ada sebelum validasi
-      if (!nameInput || !emailInput || !messageInput) {
-        showStatus("Error: Form elements not properly configured", "error");
-        return;
-      }
-
-      // Validasi sederhana
-      if (!nameInput.value.trim()) {
-        showStatus("Nama tidak boleh kosong", "error");
-        nameInput.focus();
-        return;
-      }
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(emailInput.value)) {
-        showStatus("Format email tidak valid", "error");
-        emailInput.focus();
-        return;
-      }
-
-      if (messageInput.value.trim().length < 10) {
-        showStatus("Pesan harus minimal 10 karakter", "error");
-        messageInput.focus();
-        return;
-      }
-
-      // Tampilkan spinner loading
-      submitBtn.disabled = true;
-      const loadingSpinner = contactForm.querySelector(".loading-spinner");
-      if (loadingSpinner) loadingSpinner.style.display = "inline-block";
-
-      // Debugging: Log the FormData being sent
-      console.log("Sending FormData:", Array.from(new FormData(contactForm)));
-
-      // If scriptURL is configured, send to Google Sheets
-      if (scriptURL && scriptURL !== "https://script.google.com/macros/s/AKfycbwGB4sQ5GLPrZZJYyzOGpXUaqNrHKQYioaFG6adEy8V2vl7oMBrKypq0RBU6UQ-8WQ/exec") {
-        fetch(scriptURL, {
-          method: "POST",
-          body: new FormData(contactForm),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-            return response.json().catch(() => {
-              // Jika response bukan JSON, return success default
-              return { result: "success" };
-            });
-          })
-          .then((data) => {
-            showStatus("Pesan berhasil dikirim! Terima kasih telah menghubungi saya.", "success");
-            contactForm.reset();
-          })
-          .catch((error) => {
-            console.error("Error!", error.message);
-            showStatus("Terjadi kesalahan. Silakan coba lagi.", "error");
-          })
-          .finally(() => {
-            submitBtn.disabled = false;
-            if (loadingSpinner) loadingSpinner.style.display = "none";
-          });
-      } else {
-        console.warn("scriptURL is not properly configured."); // Debugging: Warn if scriptURL is not set
-        showStatus("Pesan berhasil dikirim! Terima kasih telah menghubungi saya.", "success");
-        contactForm.reset();
-        submitBtn.disabled = false;
-        if (loadingSpinner) loadingSpinner.style.display = "none";
-      }
-    });
-  }
-
-  // if (commentForm) {
-  //   commentForm.addEventListener("submit", (e) => {
-  //     e.preventDefault();
-  //     const name = document.getElementById("commentName").value;
-  //     const message = document.getElementById("commentMessage").value;
-  //     addNewComment(name, message);
-  //     commentForm.reset();
-  //   });
-  // }
-
-  // Helper function untuk menampilkan status form
-  function showStatus(message, type) {
-    let formStatus = document.getElementById("formStatus");
-
-    if (!formStatus) {
-      formStatus = createFormStatusElement();
-    }
-
-    formStatus.textContent = message;
-    formStatus.className = "form-status " + type;
-    formStatus.style.display = "block";
-
-    // Sembunyikan pesan setelah 5 detik
-    setTimeout(() => {
-      formStatus.style.display = "none";
-    }, 5000);
-  }
-
-  // Helper function untuk membuat elemen status jika belum ada
-  function createFormStatusElement() {
-    const formStatus = document.createElement("div");
-    formStatus.id = "formStatus";
-    formStatus.className = "form-status";
-    formStatus.style.display = "none";
-
-    // Tambahkan ke dalam form
-    if (contactForm) {
-      contactForm.appendChild(formStatus);
-    }
-
-    return formStatus;
+    initContactForm(contactForm, scriptURL);
   }
 
   AOS.init({
@@ -202,25 +59,157 @@ document.addEventListener("DOMContentLoaded", function () {
 
   loadProjectsFromJSON();
 
+  initContactForm();
+
   initBackToTopButton();
 
   initTypeWriter();
-  // initProjectFilter();
-  initDarkMode();
-  initLazyLoading();
-  initFormValidation();
-  loadProjectsFromJSON();
-  initProjectModal();
+
   initParallaxEffect();
   initScrollIndicator();
   initCounterAnimation();
-  checkBrowserCompatibility();
-  initBackToTopButton();
-  loadProjectsFromJSON();
-
-  // Tambahkan CSS untuk fitur baru
-  addCustomStyles();
 });
+
+// Form submission handling function - moved outside DOMContentLoaded
+function initContactForm(contactForm, scriptURL) {
+  const submitBtn = contactForm.querySelector('button[type="submit"]');
+  const formStatus = document.getElementById("formStatus") || createFormStatusElement();
+
+  // Tambahkan loading spinner jika belum ada
+  if (!contactForm.querySelector(".loading-spinner")) {
+    const spinner = document.createElement("span");
+    spinner.className = "loading-spinner";
+    spinner.style.display = "none";
+    spinner.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    submitBtn.appendChild(spinner);
+  }
+
+  contactForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    // Dapatkan elemen input
+    const nameInput = contactForm.querySelector('input[name="name"]') || contactForm.querySelector('input[type="text"]');
+    const emailInput = contactForm.querySelector('input[name="email"]') || contactForm.querySelector('input[type="email"]');
+    const messageInput = contactForm.querySelector('textarea[name="message"]') || contactForm.querySelector("textarea");
+
+    // Pastikan elemen memiliki atribut name (penting untuk FormData)
+    if (nameInput && !nameInput.hasAttribute("name")) nameInput.setAttribute("name", "name");
+    if (emailInput && !emailInput.hasAttribute("name")) emailInput.setAttribute("name", "email");
+    if (messageInput && !messageInput.hasAttribute("name")) messageInput.setAttribute("name", "message");
+
+    // Debug info
+    console.log("Form elements:", {
+      nameInput: nameInput ? nameInput.value : "not found",
+      emailInput: emailInput ? emailInput.value : "not found",
+      messageInput: messageInput ? messageInput.value : "not found",
+    });
+
+    // Pastikan semua input ada sebelum validasi
+    if (!nameInput || !emailInput || !messageInput) {
+      showStatus("Error: Form elements not properly configured", "error");
+      return;
+    }
+
+    // Validasi sederhana
+    if (!nameInput.value.trim()) {
+      showStatus("Nama tidak boleh kosong", "error");
+      nameInput.focus();
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailInput.value)) {
+      showStatus("Format email tidak valid", "error");
+      emailInput.focus();
+      return;
+    }
+
+    if (messageInput.value.trim().length < 10) {
+      showStatus("Pesan harus minimal 10 karakter", "error");
+      messageInput.focus();
+      return;
+    }
+
+    // Tampilkan spinner loading
+    submitBtn.disabled = true;
+    const loadingSpinner = contactForm.querySelector(".loading-spinner");
+    if (loadingSpinner) loadingSpinner.style.display = "inline-block";
+
+    // Debugging: Log the FormData being sent
+    console.log("Sending FormData:", Array.from(new FormData(contactForm)));
+
+    // If scriptURL is configured, send to Google Sheets
+    if (scriptURL && scriptURL !== "https://script.google.com/macros/s/AKfycbwGB4sQ5GLPrZZJYyzOGpXUaqNrHKQYioaFG6adEy8V2vl7oMBrKypq0RBU6UQ-8WQ/exec") {
+      fetch(scriptURL, {
+        method: "POST",
+        body: new FormData(contactForm),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json().catch(() => {
+            // Jika response bukan JSON, return success default
+            return { result: "success" };
+          });
+        })
+        .then((data) => {
+          showStatus("Pesan berhasil dikirim! Terima kasih telah menghubungi saya.", "success");
+          contactForm.reset();
+        })
+        .catch((error) => {
+          console.error("Error!", error.message);
+          showStatus("Terjadi kesalahan. Silakan coba lagi.", "error");
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          if (loadingSpinner) loadingSpinner.style.display = "none";
+        });
+    } else {
+      console.warn("scriptURL is not properly configured."); // Debugging: Warn if scriptURL is not set
+      showStatus("Pesan berhasil dikirim! Terima kasih telah menghubungi saya.", "success");
+      contactForm.reset();
+      submitBtn.disabled = false;
+      if (loadingSpinner) loadingSpinner.style.display = "none";
+    }
+  });
+}
+
+// Helper function untuk menampilkan status form
+function showStatus(message, type) {
+  let formStatus = document.getElementById("formStatus");
+
+  if (!formStatus) {
+    formStatus = createFormStatusElement();
+  }
+
+  formStatus.textContent = message;
+  formStatus.className = "form-status " + type;
+  formStatus.style.display = "block";
+
+  // Sembunyikan pesan setelah 5 detik
+  setTimeout(() => {
+    formStatus.style.display = "none";
+  }, 5000);
+}
+
+// Helper function to create form status element if it doesn't exist
+function createFormStatusElement() {
+  const formStatus = document.createElement("div");
+  formStatus.id = "formStatus";
+  formStatus.className = "form-status";
+  formStatus.style.display = "none";
+
+  // Find contact form container and append the status element
+  const contactForm = document.getElementById("contactForm");
+  if (contactForm) {
+    contactForm.parentNode.insertBefore(formStatus, contactForm.nextSibling);
+  } else {
+    document.body.appendChild(formStatus);
+  }
+
+  return formStatus;
+}
 
 // Function to add a new comment
 // function addNewComment(name, message) {
@@ -1012,6 +1001,8 @@ function showToast(message, type = "success") {
   });
 }
 
+document.addEventListener("DOMContentLoaded", showToast);
+
 // Fungsi untuk validasi form
 // function initFormValidation() {
 //   const contactForm = document.getElementById("contactForm");
@@ -1262,6 +1253,8 @@ function initParallaxEffect() {
   });
 }
 
+document.addEventListener("DOMContentLoaded", initParallaxEffect);
+
 // Fungsi untuk membuat efek scroll indicator
 function initScrollIndicator() {
   const scrollIndicator = document.createElement("div");
@@ -1276,6 +1269,8 @@ function initScrollIndicator() {
     scrollIndicator.style.width = `${scrollPercentage}%`;
   });
 }
+
+document.addEventListener("DOMContentLoaded", initScrollIndicator);
 
 // Fungsi untuk menampilkan statistik yang teranimimasi
 function initCounterAnimation() {
@@ -1312,6 +1307,8 @@ function initCounterAnimation() {
     countObserver.observe(stat);
   });
 }
+
+document.addEventListener("DOMContentLoaded", initCounterAnimation);
 
 // Fungsi untuk deteksi dan notifikasi browser yang tidak kompatibel
 function checkBrowserCompatibility() {
@@ -1364,6 +1361,8 @@ function initBackToTopButton() {
     });
   });
 }
+
+document.addEventListener("DOMContentLoaded", initBackToTopButton);
 
 // Inisialisasi semua fungsi saat DOM sudah load
 document.addEventListener("DOMContentLoaded", function () {
