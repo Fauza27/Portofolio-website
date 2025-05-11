@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fauza - AI/ML Engineeer Portfolio</title>
+    <title>Fauza - Data Scientist/ML Engineeer Portfolio</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
@@ -167,14 +167,18 @@
             <p>Have something to discuss? Send me a message and let's talk.</p>
             <form id="contactForm" method="POST">
               <div class="form-group">
-                <input type="text" name="name" id="contactName" placeholder="Your Name" required />
+                <input type="text" name="name" id="contactName" placeholder="Your Name" required minlength="2" />
+                <div class="input-error" id="nameError"></div>
               </div>
               <div class="form-group">
                 <input type="email" name="email" id="contactEmail" placeholder="Your Email" required />
+                <div class="input-error" id="emailError"></div>
               </div>
               <div class="form-group">
-                <textarea name="message" id="contactMessage" placeholder="Your Message" required></textarea>
+                <textarea name="message" id="contactMessage" placeholder="Your Message" required minlength="10"></textarea>
+                <div class="input-error" id="messageError"></div>
               </div>
+              <input type="hidden" name="timestamp" id="timestamp" />
               <button type="submit" class="btn btn-primary" id="submitBtn">
                 <i class="fas fa-paper-plane"></i> Send Message
                 <span class="loading-spinner" style="display: none">
@@ -203,7 +207,7 @@
 
     <footer data-aos="fade-up">
       <div class="container">
-        <p>&copy; 2025 Fauza. All Rights Reserved.</p>
+        <p>&copy; 2025 Fauza. All Rights Reserved. <span id="timestamp"></span></p>
       </div>
     </footer>
 
