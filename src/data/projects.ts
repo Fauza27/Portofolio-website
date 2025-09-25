@@ -21,7 +21,7 @@ export const projects: Project[] = [
     category: "AI/ML, Chatbot",
     technologies: ["Python", "LangChain", "AWS Bedrock", "Qdrant", "Next.js"],
     demoLink: "https://food-recomendation-chatbot.vercel.app",
-    detailsLink: "https://github.com/Fauza27/Food-Recommendation-Chatbot",
+    detailsLink: "https://github.com/Fauza27/food-recommendation-chatbot",
     features: [
       "Food recommendations powered by RAG",
       "Context-aware suggestions (meal time based)",
